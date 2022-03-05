@@ -1,0 +1,47 @@
+%flex-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+%flex_col-justify {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+%fixed {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+%abs-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+%mt-40 {
+    margin-top: 20rem;
+}
+
+%mb-20 {
+    margin-bottom: 20rem;
+}
+
+%image-responsive {
+    .case_figure {
+        width: 100%;
+        height: 100%;
+    }
+    .case_image {
+        position: relative;
+    }
+}

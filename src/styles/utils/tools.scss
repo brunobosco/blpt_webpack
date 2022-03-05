@@ -1,0 +1,41 @@
+//? Utils
+.slide {
+    .ofh {
+        position: absolute;
+    }
+}
+
+.ofh {
+    overflow: hidden;
+}
+
+//? Cursor
+.cursor {
+    display: none;
+}
+@media (any-pointer: fine) {
+    .cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: block;
+        pointer-events: none;
+        opacity: 0;
+    }
+    .cursor__inner {
+        fill: $cursor-fill;
+        stroke: $cursor-stroke;
+        stroke-width: $cursor-stroke-width;
+    }
+}
+
+//? Background Noise
+.noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: inherit;
+    height: inherit;
+    pointer-events: none;
+    opacity: 0.1;
+}

@@ -1,0 +1,21 @@
+block variables
+
+doctype html
+html(lang="en")
+    head
+        include ./partials/head
+
+    body
+        include ./partials/preloader
+        include ./partials/navigation
+        
+    section.content(data-smoothscroll="container" data-template="home")
+        main(data-smoothscroll="content")
+            section.home
+                .home_wrapper
+                    .home_text 
+                        p| Lorem, ipsum dolor sit amet consectetur adipisicing elit. Temporibus officiis consequatur iusto accusamus praesentium eaque, a eveniet inventore quasi dolorem eius excepturi, numquam quibusdam voluptatum molestiae, error est! A, voluptatibus.
+                        
+            
+
+

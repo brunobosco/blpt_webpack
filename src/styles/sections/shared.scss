@@ -1,0 +1,140 @@
+$prealoder-padding: 6rem;
+
+//? Preloder
+.loader {
+    @extend %fixed;
+    z-index: 200;
+    overflow: hidden;
+    .loader_wrapper {
+        width: 100%;
+        height: 100%;
+        padding: 6rem;
+        background-color: $color-primary;
+
+        @extend %flex-center;
+
+        @media (max-width: 768px) {
+            justify-content: space-between;
+        }
+
+        .loader_title {
+            text-align: center;
+        }
+    }
+}
+
+//? Overlay page transition
+#page-transition {
+    position: absolute;
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 999;
+    li {
+        width: 20%;
+        transform: scaleX(0);
+        background: #212121;
+    }
+}
+
+//? Nav
+.nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 4rem 6rem;
+    z-index: 100;
+
+    // background-color: $color-primary;
+    // border-radius: 0 0 3.2rem 3.2rem;
+    // filter: invert(75%);
+    .nav_flex {
+        display: flex;
+        justify-content: space-between;
+        width: inherit;
+        overflow: hidden;
+        .nav_flex-links {
+            a {
+                display: inline-flex;
+                align-items: flex-end;
+            }
+            svg {
+                width: 2rem;
+                height: 2rem;
+                margin-left: 2rem;
+            }
+        }
+    }
+    .active {
+        color: red;
+        transition: all 1s;
+    }
+
+    .nav_extra {
+        position: fixed;
+        left: 1rem;
+        bottom: 2rem;
+
+        transform: rotate(-90deg);
+    }
+}
+
+.nav_flex-menu {
+    cursor: pointer;
+    p {
+        font-size: 2rem;
+    }
+}
+
+//? Menu
+.menu {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 99;
+    overflow: hidden;
+    pointer-events: none;
+    .menu_inner {
+        position: relative;
+        width: inherit;
+        overflow: hidden;
+        height: 0;
+        opacity: 0.99;
+        background-color: $color-primary;
+        .menu_inner-list {
+            display: flex;
+            justify-content: end;
+            align-items: flex-end;
+            height: inherit;
+            color: $color-primary;
+            padding: 1rem;
+            li {
+                font-size: 10rem;
+                margin-left: 2rem;
+                line-height: 0.5;
+            }
+        }
+        .menu_inner-nav {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            filter: invert(1);
+            cursor: pointer;
+            z-index: 999;
+            opacity: 0;
+            p {
+                font-size: 2rem;
+            }
+        }
+    }
+}
+
+.menu--visible {
+    pointer-events: auto;
+}
