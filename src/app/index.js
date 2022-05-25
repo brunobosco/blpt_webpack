@@ -10,7 +10,7 @@ import Home from './pages/Home';
 class App {
     constructor() {
         this.initPartials();
-        this.checkAnimations();
+        this.initAnimations();
 
         this.initPreloader();
 
@@ -25,23 +25,12 @@ class App {
         this.transition = new PageTransition();
     }
 
-    checkAnimations() {
-        const isMobile = window.matchMedia('(max-width: 769px)');
-        const checkIsMobile = isMobile.matches;
-
-        if (!checkIsMobile) {
-            this.initAnimations();
-        }
-    }
-
     initAnimations() {
         new SmoothScroll();
     }
 
     initPreloader() {
         this.preloader = new Preloader();
-
-        this.preloader.show();
         this.preloader.once('completed', this.onPreloaded.bind(this));
     }
 

@@ -6,9 +6,12 @@ export default class SmoothScroll {
 
         this.current = 0;
         this.target = 0;
-        this.ease = 0.06;
+        this.ease = 0.04;
 
-        this.init();
+        this.isMobile = window.matchMedia('(max-width: 769px)').matches;
+        !this.isMobile ? this.init() : null;
+
+        this.addEventListeners();
     }
 
     init() {
@@ -16,7 +19,11 @@ export default class SmoothScroll {
         document.body.style.height = `${this.containerHeight}px`;
 
         this.scroll();
-        this.addEventListeners();
+    }
+
+    calcSectionRect(section) {
+        this.section = section.getBoundingClientRect();
+        return this.section.top - 100;
     }
 
     scroll() {
@@ -34,7 +41,38 @@ export default class SmoothScroll {
         document.body.style.height = `${this.containerHeight}px`;
     }
 
+    onScrollTop(e) {
+        e.preventDefault();
+
+        if (!this.isMobile) {
+            window.scrollBy({
+                top: -this.containerHeight,
+                left: 0,
+                behavior: 'smooth',
+            });
+        } else {
+            document.querySelector('.home').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    onScrollBy(e) {
+        e.preventDefault();
+
+        const id = e.srcElement.id;
+        const selector = this.el.querySelector(`.${id}`);
+
+        //? Anchor/button selector to trigger scrollBy
+        if (id === 'gallery')
+            window.scrollBy({
+                top: this.calcSectionRect(selector),
+                left: 0,
+                behavior: 'smooth',
+            });
+    }
+
     addEventListeners() {
         window.addEventListener('resize', this.onResize.bind(this));
+
+        //?Add event listeners
     }
 }

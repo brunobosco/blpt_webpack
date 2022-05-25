@@ -87,18 +87,6 @@ canvas {
     }
 }
 
-.grid-1 {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    grid-template-rows: 1fr;
-    grid-column-gap: 6rem;
-    grid-template-areas: 'left right';
-    @media (max-width: $breakpoint-tablet) {
-        display: flex;
-        flex-direction: column;
-    }
-}
-
 figure {
     background-color: $color-alternate;
 }
@@ -121,15 +109,15 @@ h3 {
 
 p,
 li {
-    @extend %parag-16;
+    @extend %parag;
 }
 
 span {
-    @extend %label-14;
+    @extend %label;
 }
 
 a {
-    @extend %parag-16;
+    @extend %parag;
     color: inherit;
     text-decoration: none;
     outline: none;
@@ -137,6 +125,7 @@ a {
 
     cursor: pointer;
 }
+
 
 @media (max-width: $breakpoint-tablet) {
     figure {
@@ -146,6 +135,20 @@ a {
     img {
         position: relative !important;
     }
+}
+
+.noise {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+	opacity: 0.1; // adjust me!
+	z-index: 9999;
+
+	pointer-events: none;
+	user-select: none;
 }
 
 //? Hover line animation
@@ -198,4 +201,19 @@ a {
 .lazyloaded {
     opacity: 1;
     transition: opacity 1s ease;
+}
+
+//? Utility
+.is-mobile {
+    display: none;
+    @media (max-width :$breakpoint-mobile) {
+        display: block;
+    }
+}
+
+.is-desktop {
+    display: block;
+    @media (max-width :$breakpoint-mobile) {
+        display: none;
+    }
 }

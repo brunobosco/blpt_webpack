@@ -1,72 +1,56 @@
-import gsap from 'gsap';
+import GSAP from 'gsap';
+
+import { eases } from '../utils/easing';
+import each from 'lodash/each';
 
 export default class Observer {
-    constructor(el) {
-        this.el = document.querySelector("[data-scroll='container']");
-        this.intersection = this.el.querySelectorAll("[data-scroll='item']");
+    constructor() {
+        this.el = document.querySelector("[data-smoothscroll='container']");
+        this.observerElements = this.el.querySelectorAll('[data-scroll-animation]');
 
-        this.config = {
+        this.options = {
             root: null,
-            rootMargin: '-1% 0px',
+            treshold: 0.5,
+            rootMargin: '-100px',
         };
 
         this.init();
     }
 
     init() {
-        let observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                this.figure = entry.target.querySelectorAll('.projects_figure');
-                this.title = entry.target.querySelectorAll('.projects_title');
-                this.description = entry.target.querySelectorAll('.projects_description');
+        this.observer = new IntersectionObserver(this.callback, this.options);
 
-                const tl = gsap
-                    .timeline({ paused: true })
-                    .addLabel('start')
-                    .fromTo(
-                        [this.figure],
-                        {
-                            autoAlpha: 0,
-                            x: '100%',
-                        },
-                        {
-                            duration: 1,
-                            x: 0,
-                            autoAlpha: 1,
-                            stagger: 0.05,
-                            ease: 'Power4.easeInOut',
-                        }
-                    )
-                    .fromTo(
-                        [this.title, this.description],
-                        {
-                            autoAlpha: 0,
-                            y: '100%',
-                        },
-                        {
-                            duration: 1,
-                            y: 0,
-                            autoAlpha: 1,
-                            stagger: 0.2,
-                            ease: 'Power4.easeInOut',
-                        },
-                        'start+='
-                    );
+        each(this.observerElements, (el) => {
+            const image = el.querySelectorAll('img');
 
-                if (entry.intersectionRatio > 0) {
-                    tl.play();
-                    observer.unobserve(entry.target);
-                } else {
-                    // tl.reversed();
-                }
-            });
+            this.tl = GSAP.timeline({ paused: true });
+
+            this.tl.from(
+                image,
+                {
+                    duration: 2,
+                    y: '-101%',
+                    stagger: 0.15,
+                    ease: eases.expoInOut,
+                },
+                0
+            );
+
+            el.timeline = this.tl;
         });
-        this.intersection.forEach((el) => {
-            observer.observe(el);
+
+        Array.prototype.forEach.call(this.observerElements, (el) => {
+            this.observer.observe(el);
         });
-        // for (let i = 0; i < this.intersection.length; i++) {
-        //     console.log(i);
-        //     observer.observe(this.intersection[i]);
-        // }
+    }
+
+    callback(entries, observer) {
+        each(entries, (entry) => {
+            if (entry.isIntersecting) {
+                entry.target.timeline.play();
+            } else {
+                entry.target.timeline.reverse();
+            }
+        });
     }
 }

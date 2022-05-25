@@ -2,7 +2,6 @@ import GSAP from 'gsap';
 import Component from '../partials/Component';
 
 import { each } from 'lodash';
-
 import { eases } from '../utils/easing';
 
 export default class Preload extends Component {
@@ -11,43 +10,52 @@ export default class Preload extends Component {
             element: '.loader',
             elements: {
                 wrapper: '.loader_wrapper',
-                desc: '.loader_title > h3',
+                desc: '.loader_desc > h3',
                 perc: '.loader_perc > p',
                 images: document.querySelectorAll('img'),
             },
         });
+
         this.length = 0;
+        this.imageLength = this.elements.images.length;
+
+        this.init();
     }
 
-    show() {
+    init() {
+        //? Remember to set overflow hidden to body class
         setTimeout(() => {
             this.initLoader();
         }, 1000);
     }
 
     initLoader() {
-        each(this.elements.images, (element) => {
-            element.onload = () => {
-                this.onAssetLoaded();
-            };
-            element.onerror = (error) => {
-                console.log(error);
-            };
-            element.src = element.getAttribute('data-src');
-        });
+        if (this.imageLength === 0) this.onAssetLoaded();
 
-        this.onAssetLoaded();
+        each(this.elements.images, (element) => {
+            let img = new Image();
+
+            img.onload = () => this.onAssetLoaded();
+            img.onerror = (error) => console.log(error);
+
+            img.src = element.getAttribute('data-src');
+        });
     }
 
     onAssetLoaded() {
         this.length += 1;
 
-        let percent = (this.length / this.elements.images.length) * 100;
-        this.elements.perc.innerText = `${percent}%`;
+        let percent = this.length / this.imageLength;
 
-        setTimeout(() => {
-            this.emit('completed');
-        }, 1000);
+        if (this.imageLength === 0) percent = 1;
+
+        this.elements.perc.innerHTML = `${Math.round(percent * 100)}%`;
+
+        if (percent === 1) {
+            setTimeout(() => {
+                this.emit('completed');
+            }, 500);
+        }
     }
 
     destroy() {

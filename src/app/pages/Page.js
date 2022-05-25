@@ -27,11 +27,11 @@ export default class Page {
                     this.elements[key] = document.querySelector(element);
                 }
             }
-            // console.log(this.elements[key], element);
         });
     }
 
     initIntroAnimation() {
+        console.log(this.selectorChildren);
         this.intro = GSAP.timeline({ paused: true })
             .addLabel('start')
             .from(

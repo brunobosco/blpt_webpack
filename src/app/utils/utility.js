@@ -15,3 +15,63 @@ export function mapEach(element, callback) {
 
     return map(element, callback);
 }
+
+export function canvasNoise() {
+    const canvas = document.createElement('canvas');
+    canvas.className = 'noise';
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+
+    function noise(ctx) {
+        let w = ctx.canvas.width,
+            h = ctx.canvas.height,
+            idata = ctx.createImageData(w, h),
+            buffer32 = new Uint32Array(idata.data.buffer),
+            len = buffer32.length,
+            i = 0;
+
+        for (; i < len; ) buffer32[i++] = ((100 * Math.random()) | 0) << 24;
+
+        ctx.putImageData(idata, 0, 0);
+    }
+
+    window.onresize = () => {
+        resize();
+        noise(ctx);
+    };
+
+    let toggle = true;
+
+    // (function loop() {
+    //     toggle = !toggle;
+    //     if (toggle) {
+    //         requestAnimationFrame(loop);
+    //         return;
+    //     }
+
+    //     requestAnimationFrame(loop);
+    // })();
+
+    noise(ctx);
+}
+
+export function calcMobileViewport(element) {
+    const rootElement = document.querySelector(element);
+    const viewportHeight = rootElement.getBoundingClientRect().height;
+    const windowtHeight = window.innerHeight;
+    const browserBar = viewportHeight - windowtHeight;
+
+    rootElement.style.height = `calc(100vh - ${browserBar}px)`;
+}
+
+//? Other utility for safari only media selecotr
+// if (navigator.userAgent.search('Safari') >= 0 && navigator.userAgent.search('Chrome') < 0) {
+//     document.querySelector(element).className += ' safari';
+// }
