@@ -17,7 +17,7 @@ const pages = ['index'];
 const mapPages = pages.map((file) => {
     return new HtmlWebpackPlugin({
         filename: `${file}.html`,
-        template: path.join(__dirname, `src/views/${file}.pug`),
+        template: path.join(__dirname, `src/views/pages/${file}.pug`),
     });
 });
 

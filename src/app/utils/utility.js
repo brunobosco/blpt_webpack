@@ -1,4 +1,5 @@
 import map from 'lodash/map';
+import GSAP from 'gsap';
 
 export function lerp(start, end, t) {
     return start * (1 - t) + end * t;
@@ -6,6 +7,18 @@ export function lerp(start, end, t) {
 
 export function lerp2(p1, p2, t) {
     return p1 + (p2 - p1) * t;
+}
+
+export function lerp3(a, b, n) {
+    return (1 - n) * a + n * b;
+}
+
+export function clamp(min, max, number) {
+    return GSAP.utils.clamp(min, max, number);
+}
+
+export function clamp2(val, min, max) {
+    return Math.max(Math.min(val, min), max);
 }
 
 export function mapEach(element, callback) {

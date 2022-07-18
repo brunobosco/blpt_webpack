@@ -7,7 +7,7 @@ export default class PageTransition {
         this.element.height = window.innerHeight;
         this.element.width = window.innerWidth;
 
-        this.main = document.querySelector('.content');
+        this.main = document.querySelector('main');
         this.nav = document.querySelector('.nav');
 
         this.context = this.element.getContext('2d');
@@ -45,7 +45,6 @@ export default class PageTransition {
                 autoAlpha: 0,
             });
         });
-        console.log(this.progress);
     }
 
     hide() {

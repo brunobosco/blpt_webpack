@@ -1,78 +1,78 @@
-import { lerp } from 'utils/utility';
+import { lerp2, clamp } from 'utils/utility';
 
 export default class SmoothScroll {
     constructor() {
-        this.el = document.querySelector("[data-smoothscroll='content']");
-
-        this.current = 0;
-        this.target = 0;
-        this.ease = 0.04;
+        this.el = document.querySelector('[data-smoothscroll]');
+        this.containerHeight = this.el.getBoundingClientRect().height;
 
         this.isMobile = window.matchMedia('(max-width: 769px)').matches;
-        !this.isMobile ? this.init() : null;
 
+        this.scroll = {
+            enable: false,
+
+            start: 0,
+            current: 0,
+            target: 0,
+            progress: 0,
+            ease: !this.isMobile ? 0.04 : 0.05,
+            speed: 0.25,
+
+            limit: this.containerHeight - window.innerHeight,
+        };
+
+        this.init();
         this.addEventListeners();
     }
 
-    init() {
-        this.containerHeight = this.el.getBoundingClientRect().height;
-        document.body.style.height = `${this.containerHeight}px`;
-
-        this.scroll();
-    }
-
-    calcSectionRect(section) {
-        this.section = section.getBoundingClientRect();
-        return this.section.top - 100;
-    }
-
-    scroll() {
-        this.current = lerp(this.current, this.target, this.ease);
-        this.current = parseFloat(this.current.toFixed(2));
-        this.target = window.scrollY;
-
-        this.el.style.transform = `translateY(${-this.current}px)`;
-
-        requestAnimationFrame(() => this.scroll());
-    }
+    init() {}
 
     onResize() {
         this.containerHeight = this.el.getBoundingClientRect().height;
-        document.body.style.height = `${this.containerHeight}px`;
+        this.scroll.limit = this.containerHeight - window.innerHeight;
     }
 
-    onScrollTop(e) {
-        e.preventDefault();
+    onTouchDown(e) {
+        if (!this.isMobile) return;
 
-        if (!this.isMobile) {
-            window.scrollBy({
-                top: -this.containerHeight,
-                left: 0,
-                behavior: 'smooth',
-            });
-        } else {
-            document.querySelector('.home').scrollIntoView({ behavior: 'smooth' });
-        }
+        this.scroll.enable = true;
+        this.scroll.position = this.scroll.current;
+        this.start = e.touches ? e.touches[0].clientY : e.clientY;
     }
 
-    onScrollBy(e) {
-        e.preventDefault();
+    onTouchMove(e) {
+        if (!this.isMobile && !this.scroll.enable) return;
 
-        const id = e.srcElement.id;
-        const selector = this.el.querySelector(`.${id}`);
+        const y = e.touches ? e.touches[0].clientY : e.clientY;
+        const distance = (this.start - y) * 3;
 
-        //? Anchor/button selector to trigger scrollBy
-        if (id === 'gallery')
-            window.scrollBy({
-                top: this.calcSectionRect(selector),
-                left: 0,
-                behavior: 'smooth',
-            });
+        this.scroll.target = this.scroll.position + distance;
+    }
+
+    onTouchUp() {
+        if (!this.isMobile) return;
+
+        this.scroll.enable = false;
+    }
+
+    onWheel(target) {
+        const speed = target.pixelY;
+
+        this.scroll.target += speed * this.scroll.speed;
+        return speed;
+    }
+
+    update() {
+        this.scroll.target = clamp(0, this.scroll.limit, this.scroll.target);
+
+        this.scroll.current = lerp2(this.scroll.current, this.scroll.target, this.scroll.ease);
+        this.scroll.current = parseFloat(this.scroll.current.toFixed(2));
+
+        if (this.scroll.current <= 0.2) this.scroll.current = 0;
+
+        this.el.style.transform = `translate3d(0, ${-this.scroll.current}px, 0)`;
     }
 
     addEventListeners() {
         window.addEventListener('resize', this.onResize.bind(this));
-
-        //?Add event listeners
     }
 }

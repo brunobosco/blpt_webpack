@@ -1,5 +1,7 @@
 import 'lazysizes';
+import normalizeWheel from 'normalize-wheel';
 
+import Time from './utils/Time';
 import Preloader from './partials/Preloader';
 
 import PageTransition from './animations/PageTransition';
@@ -9,29 +11,29 @@ import Home from './pages/Home';
 
 class App {
     constructor() {
-        this.initPartials();
-        this.initAnimations();
-
         this.initPreloader();
+        this.initPartials();
 
         this.initContents();
         this.initPages();
+        this.initAnimations();
+
+        this.time = new Time();
+        this.time.on('tick', () => {
+            this.onUpdate();
+        });
 
         this.addEventListeners();
         this.addLinkListener();
     }
 
-    initPartials() {
-        this.transition = new PageTransition();
-    }
-
-    initAnimations() {
-        new SmoothScroll();
-    }
-
     initPreloader() {
         this.preloader = new Preloader();
         this.preloader.once('completed', this.onPreloaded.bind(this));
+    }
+
+    initPartials() {
+        this.transition = new PageTransition();
     }
 
     async onPreloaded() {
@@ -43,8 +45,8 @@ class App {
     }
 
     initContents() {
-        this.content = document.querySelector('.content');
-        this.template = this.content.getAttribute('data-template');
+        this.template = document.querySelector('.template');
+        this.dataTemplate = this.template.getAttribute('data-template');
     }
 
     initPages() {
@@ -52,7 +54,11 @@ class App {
             home: new Home(),
         };
 
-        this.page = this.pages[this.template];
+        this.page = this.pages[this.dataTemplate];
+    }
+
+    initAnimations() {
+        this.smoothScroll = new SmoothScroll();
     }
 
     onPopSate() {
@@ -79,17 +85,15 @@ class App {
 
             div.innerHTML = html;
 
-            const divContent = div.querySelector('.content');
-            this.template = divContent.getAttribute('data-template');
+            const divContent = div.querySelector('.template');
+            this.dataTemplate = divContent.getAttribute('data-template');
 
-            this.content.setAttribute('data-template', this.template);
-            this.content.innerHTML = divContent.innerHTML;
+            this.template.setAttribute('data-template', this.dataTemplate);
+            this.template.innerHTML = divContent.innerHTML;
 
-            this.page = this.pages[this.template];
+            this.page = this.pages[this.dataTemplate];
 
             await this.transition.hide();
-
-            this.checkAnimations();
 
             this.addLinkListener();
         } else {
@@ -101,9 +105,21 @@ class App {
         location.reload();
     }
 
+    onWheel(e) {
+        const normalized = normalizeWheel(e);
+
+        if (this.smoothScroll && this.smoothScroll.onWheel) this.smoothScroll.onWheel(normalized);
+    }
+
+    onUpdate() {
+        if (this.smoothScroll) this.smoothScroll.update();
+    }
+
     addEventListeners() {
         window.addEventListener('popstate', this.onPopSate.bind(this));
         window.addEventListener('orientationchange', this.onOrientationChange.bind(this));
+
+        window.addEventListener('mousewheel', this.onWheel.bind(this));
     }
 
     addLinkListener() {
