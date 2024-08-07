@@ -1,42 +1,40 @@
 const path = require('path');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const PugPlugin = require('pug-plugin');
 
 const TerserPlugin = require('terser-webpack-plugin');
 
 const dirStyles = path.join(__dirname, 'src/styles');
 const dirApp = path.join(__dirname, 'src/app');
 
+const dirMedia = path.join(__dirname, 'src/media');
 const dirStatic = path.join(__dirname, 'static');
 const dirNode = 'node_modules';
 
-const pages = ['index'];
-
-const mapPages = pages.map((file) => {
-    return new HtmlWebpackPlugin({
-        filename: `${file}.html`,
-        template: path.join(__dirname, `src/views/pages/${file}.pug`),
-    });
-});
-
 module.exports = {
-    entry: [path.join(dirApp, 'index.js'), path.join(dirStyles, 'index.scss')],
+    entry: {
+        index: './src/views/pages/index.pug',
+    },
     resolve: {
         modules: [dirStyles, dirApp, dirStatic, dirNode],
+        alias: {
+            Media: dirMedia,
+        },
     },
 
     plugins: [
-        ...mapPages,
+        new PugPlugin({
+            js: {
+                filename: 'app.js',
+            },
+            css: {
+                filename: 'style.css',
+            },
+        }),
 
         new CopyWebpackPlugin({
             patterns: [{ from: path.resolve(__dirname, 'static'), to: 'static' }],
-        }),
-
-        new MiniCssExtractPlugin({
-            filename: '[name].css',
-            chunkFilename: '[id].css',
         }),
     ],
 
@@ -45,19 +43,13 @@ module.exports = {
             // HTML
             {
                 test: /\.pug$/,
-                use: ['pug-loader'],
+                loader: PugPlugin.loader,
             },
 
             // CSS
             {
                 test: /\.(sa|sc|c)ss$/,
                 use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            publicPath: '',
-                        },
-                    },
                     {
                         loader: 'css-loader',
                     },
@@ -80,10 +72,9 @@ module.exports = {
             // Images
             {
                 test: /\.(jpe?g|png|gif|svg|fnt|webp)$/,
-                loader: 'file-loader',
-                options: {
-                    name: '[path][name].[ext]',
-                    // outputPath: 'images/',
+                type: 'asset/resource',
+                generator: {
+                    filename: 'media/[name].[hash:8][ext]',
                 },
             },
 

@@ -1,13 +1,21 @@
 doctype html
 html(lang="en")
     head
-        include ./partials/head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+
+    base(href="/")
+    
+    block seo
+    include ./partials/head
 
     body
         include ./partials/preloader
         include ./partials/navigation
         
     block content
+
+    script(src=require("../app/index.js") type="module" defer="defer")
                         
             
 
